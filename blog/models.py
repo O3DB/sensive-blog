@@ -1,7 +1,7 @@
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import User
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 
 
 class PostQuerySet(models.QuerySet):
@@ -21,6 +21,10 @@ class PostQuerySet(models.QuerySet):
             post.comments_amount = ids_and_comments[post.id]
 
         return posts
+
+    def fetch_tags_with_posts_count(self):
+        tags_query = Tag.objects.annotate(posts_amount=Count('posts'))
+        return self.prefetch_related(Prefetch('tags', queryset=tags_query))
 
 
 class TagQuerySet(models.QuerySet):
