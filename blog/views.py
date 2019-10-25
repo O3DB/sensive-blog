@@ -45,7 +45,8 @@ def index(request):
 
 
 def post_detail(request, slug):
-    post = Post.objects.filter(slug=slug).prefetch_related('author')[0]
+    post = Post.objects.get(slug=slug)
+
 
     comments = Comment.objects.filter(post=post).prefetch_related('author')
     serialized_comments = []
