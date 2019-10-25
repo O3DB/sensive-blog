@@ -20,7 +20,7 @@ class PostQuerySet(models.QuerySet):
         for post in posts:
             post.comments_amount = ids_and_comments[post.id]
 
-        return posts
+        return list(posts)
 
     def fetch_tags_with_posts_count(self):
         tags_query = Tag.objects.annotate(posts_amount=Count('posts'))
