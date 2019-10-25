@@ -45,9 +45,8 @@ def index(request):
 
 
 def post_detail(request, slug):
-    post = Post.objects.select_related('author').get(slug=slug)
-
-    comments = Comment.objects.filter(post=post).select_related('author')
+    post = Post.objects.select_related('author').annotate(likes_count=Count('likes')).get(slug=slug)
+    comments = post.comments.select_related('author')
     serialized_comments = []
     for comment in comments:
         serialized_comments.append({
@@ -63,7 +62,7 @@ def post_detail(request, slug):
         "text": post.text,
         "author": post.author.username,
         "comments": serialized_comments,
-        'likes_amount': post.likes.count(),
+        'likes_amount': post.likes_count,
         "image_url": post.image.url if post.image else None,
         "published_at": post.published_at,
         "slug": post.slug,
